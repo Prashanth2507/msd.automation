@@ -16,8 +16,8 @@ class HomePage(BasePage):
             actions = ActionChains(self.driver)
             actions.click(self.driver.find_element(*HomePageLocators.wImg_Stylewithit)).perform()
             WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(RecommendationPopUpLocators.wE_PopUpWrapper))
-        except Exception:
-            print("Error occurred while clicking Style it with button. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while clicking Style it with button. Error: " + str(e))
         
     #this method validates the source & text of all the 'Style it with'buttons in the page
     #also verifies if the x - position of style it button matches that of product title element(tag-div)
@@ -42,22 +42,22 @@ class HomePage(BasePage):
                     print("Style it with button is aligned properly with the product")
                 else:
                     print("Style it with button is NOT aligned properly with the product")
-        except Exception:
-            print("Error occurred while validating style it with buttons. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while validating style it with buttons. Error: " + str(e))
     
     def fetchProductNameitem3(self):
         try:
             return self.driver.find_element(*HomePageLocators.wE_ItemName_3).get_attribute("text")
-        except Exception:
-            print("Error occurred while fetching the product name. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while fetching the product name. Error: " + str(e))
 
 class RecommendationPopUpPage(BasePage):
     def fetchMainProductName(self):
         try:
             WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(RecommendationPopUpLocators.wE_PopUpWrapper))
             return self.driver.find_element(*RecommendationPopUpLocators.wE_MainProductText).get_attribute("text")
-        except Exception:
-            print("Error occurred while fetching main product name. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while fetching main product name. Error: " + str(e))
             
     # This method prints the y position of all the products in recommendation pop up
     def validateproductsposition(self):
@@ -66,8 +66,8 @@ class RecommendationPopUpPage(BasePage):
             WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(RecommendationPopUpLocators().wE_NextArrow)).click()
             WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(RecommendationPopUpLocators().wE_ProductItem_5))
             self.submethod_printproductverticalposition(4, 8)
-        except Exception:
-            print("Error occurred while validating products position. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while validating products position. Error: " + str(e))
             
     #reusable function
     def submethod_printproductverticalposition(self,fro,to):
@@ -75,29 +75,29 @@ class RecommendationPopUpPage(BasePage):
             for counter in range(fro,to):
                 position = self.driver.find_element_by_xpath("//div[@data-item-id='occasion_" + str(counter) + "']/div/div[@class='vue-carousel-slide-item-card']").location.get('y')
                 print("Product # " + str(counter+1) + " is positioned at " + str(position) + " vertically.")
-        except Exception:
-            print("Error occurred while printing products vertical position. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while printing products vertical position. Error: " + str(e))
             
     #This method sends request to the href attribute of each product and prints the status code
     def validateCarousel(self):
         try:
-            print(self.driver.find_element_by_xpath("//div[@class='vue-popup-heading vue-font-bold' and text()='Similar Products']").is_displayed())
+            print(self.driver.find_element_by_xpath(*RecommendationPopUpLocators().wLbl_SimilarProducts).is_displayed())
             print("Validation of requests when navigated to each product in recommendation pop up")
             self.submethod_sendhttprequests(0, 4)
             WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(RecommendationPopUpLocators().wE_NextArrow)).click()
             WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(RecommendationPopUpLocators().wE_ProductItem_5))
             self.submethod_sendhttprequests(4, 8)
-        except Exception:
-            print("Error occurred while validating carousel. Error: " + str(Exception))    
+        except Exception as e:
+            print("Error occurred while validating carousel. Error: " + str(e))    
         
-    #resuable function
+    #reusable function
     def submethod_sendhttprequests(self,fro,to):
         try:
             for counter in range(fro,to):
                 url = self.driver.find_element_by_xpath("//div[@data-item-id='occasion_" + str(counter) + "']//a").get_attribute("href")
                 print("Status code on sending the endpoint of product " + str(counter+1) + " is " + str(requests.head(url).status_code))        
-        except:
-            print("Error occurred while validating requests. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while validating requests. Error: " + str(e))
 
     #This method validates the href attribute of the product with the page url once the product is clicked
     def validateProductDisplay(self):
@@ -105,15 +105,18 @@ class RecommendationPopUpPage(BasePage):
             element = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(RecommendationPopUpLocators().wE_ProductItem_1))
             expected_pageurl = element.get_attribute('href')
             element.click()
+            self.driver.find_element(*RecommendationPopUpLocators().wE_PopUpClose).click()
+            print("Status code on sending the endpoint "+ expected_pageurl +" of product is " + str(requests.head(expected_pageurl).status_code))        
             WebDriverWait(self.driver, 30).until(EC.new_window_is_opened)
             WebDriverWait(self.driver, 30).until(EC.number_of_windows_to_be(2))
             we_windows = self.driver.window_handles
-            self.driver.switch_to_window(we_windows[1])
-            WebDriverWait(self.driver, 30).until(EC.presence_of_element_located(YooxHomePageLocators.wE_Logo))
+            self.driver.switch_to.window(we_windows[1])
+            self.driver.set_page_load_timeout(45)
+            WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable(YooxHomePageLocators.wE_Logo))
             
             if expected_pageurl in self.driver.current_url:
                 print("Page navigation is successful. URL matches with the expected")
             else:
                 print("User is navigated to different page. Incorrect URL") 
-        except Exception:
-            print("Error occurred while validating the products displayed. Error: " + str(Exception))
+        except Exception as e:
+            print("Error occurred while validating the products displayed. Error: " + str(e))

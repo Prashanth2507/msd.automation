@@ -1,3 +1,6 @@
+############Author: Prashanth. A#########################
+############Last modified: 20/05/2019####################
+
 import unittest
 from selenium import webdriver
 from libraryfiles import businessactions
@@ -12,7 +15,7 @@ class PythonMadStreetDen(unittest.TestCase):
         self.driver.set_page_load_timeout(45)
         self.driver.get("https://madstreetden.myshopify.com/collections/top-wear")
         self.driver.maximize_window()
-      
+     
     def test_1validate_styleitwith(self):
         print("This test is to validate if Style it with buttons are rendered properly")
         print("----------------------------------------------------------------------")

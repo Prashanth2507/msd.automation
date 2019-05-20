@@ -11,6 +11,7 @@ class RecommendationPopUpLocators(object):
     wE_NextArrow = (By.XPATH,"//a[@class='vue-next-nav-wrapper']")
     wE_ProductItem_5 = (By.XPATH,"//div[@data-item-id='occasion_4']//a")
     wE_ProductItem_1 = (By.XPATH,"//div[@data-item-id='occasion_0']//a")
+    wE_PopUpClose = (By.XPATH,"//div[@class='vue-popup-close-button']")
         
 class YooxHomePageLocators(object):
     wE_Logo = (By.XPATH,"//div[@id='logo']")
